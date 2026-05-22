@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, FlatList } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { router } from 'expo-router'; 
+import { router } from 'expo-router';
 
 type Pet = {
   nome: string;
@@ -21,20 +21,20 @@ export default function PainelTutor() {
   const [listaPets, setListaPets] = useState<Pet[]>([]);
 
   useEffect(() => {
-    async function buscarDados() {
+    async function carregarTudo() {
       const doc = await AsyncStorage.getItem("DOCUMENTO");
-      if (doc) setDocSalvo(doc);
+      if (doc) {
+        setDocSalvo(doc);
+        
+        const chaveUsuario = `PETS_${doc}`;
+        const dados = await AsyncStorage.getItem(chaveUsuario);
+        if (dados) {
+          setListaPets(JSON.parse(dados));
+        }
+      }
     }
-    buscarDados();
-    buscarPets();
+    carregarTudo();
   }, []);
-
-  async function buscarPets() {
-    const dados = await AsyncStorage.getItem("PETS");
-    if (dados) {
-      setListaPets(JSON.parse(dados));
-    }
-  }
 
   async function cadastrarPet() {
     if (!nomePet || nomePet.trim() === "") {
@@ -50,8 +50,10 @@ export default function PainelTutor() {
       return;
     }
 
+    const chaveUsuario = `PETS_${docSalvo}`;
     let pets: Pet[] = [];
-    const petsSalvos = await AsyncStorage.getItem("PETS");
+    
+    const petsSalvos = await AsyncStorage.getItem(chaveUsuario);
     if (petsSalvos !== null) {
       pets = JSON.parse(petsSalvos);
     }
@@ -63,7 +65,7 @@ export default function PainelTutor() {
       peso: pesoPet.trim()
     });
 
-    await AsyncStorage.setItem("PETS", JSON.stringify(pets));
+    await AsyncStorage.setItem(chaveUsuario, JSON.stringify(pets));
     
     Alert.alert("Sucesso", "Pet cadastrado com sucesso!");
 
@@ -72,7 +74,7 @@ export default function PainelTutor() {
     setEspeciePet('');
     setPesoPet('');
     
-    buscarPets();
+    setListaPets(pets);
   }
 
   async function deletarPet(indexParaDeletar: number) {
@@ -87,7 +89,9 @@ export default function PainelTutor() {
           onPress: async () => {
             const novaLista = listaPets.filter((_, index) => index !== indexParaDeletar);
             setListaPets(novaLista);
-            await AsyncStorage.setItem("PETS", JSON.stringify(novaLista));
+            
+            const chaveUsuario = `PETS_${docSalvo}`;
+            await AsyncStorage.setItem(chaveUsuario, JSON.stringify(novaLista));
           }
         }
       ]
@@ -104,7 +108,7 @@ export default function PainelTutor() {
         data={listaPets}
         keyExtractor={(item, index) => index.toString()}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 20 }} 
+        contentContainerStyle={{ paddingBottom: 20 }}
         
         ListHeaderComponent={
           <View style={styles.headerContainer}>
@@ -285,7 +289,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 14,
   },
-  
   footerContainer: {
     width: '100%',
     alignItems: 'center',
@@ -293,7 +296,7 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   btnSairGrande: {
-    backgroundColor: '#e53935', 
+    backgroundColor: '#e53935',
     width: 300,
     height: 55,
     borderRadius: 15,
