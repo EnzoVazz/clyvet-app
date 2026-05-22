@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, FlatList } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { router } from 'expo-router'; 
 
 type Pet = {
   nome: string;
   idade: string;
   especie: string;
+  peso: string;
 };
 
 export default function PainelTutor() {
@@ -14,6 +16,7 @@ export default function PainelTutor() {
   const [nomePet, setNomePet] = useState('');
   const [idadePet, setIdadePet] = useState('');
   const [especiePet, setEspeciePet] = useState('');
+  const [pesoPet, setPesoPet] = useState('');
   
   const [listaPets, setListaPets] = useState<Pet[]>([]);
 
@@ -56,7 +59,8 @@ export default function PainelTutor() {
     pets.push({ 
       nome: nomePet.trim(), 
       idade: idadePet.trim(), 
-      especie: especiePet.trim() 
+      especie: especiePet.trim(),
+      peso: pesoPet.trim()
     });
 
     await AsyncStorage.setItem("PETS", JSON.stringify(pets));
@@ -66,11 +70,11 @@ export default function PainelTutor() {
     setNomePet('');
     setIdadePet('');
     setEspeciePet('');
+    setPesoPet('');
     
     buscarPets();
   }
 
-  // A função deletarPet agora está AQUI, fora da cadastrarPet e acessível pelo botão!
   async function deletarPet(indexParaDeletar: number) {
     Alert.alert(
       "Excluir Pet",
@@ -90,13 +94,17 @@ export default function PainelTutor() {
     );
   }
 
+  function sair() {
+    router.replace('/'); 
+  }
+
   return (
     <View style={styles.container}>
       <FlatList
         data={listaPets}
         keyExtractor={(item, index) => index.toString()}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 50 }}
+        contentContainerStyle={{ paddingBottom: 20 }} 
         
         ListHeaderComponent={
           <View style={styles.headerContainer}>
@@ -123,6 +131,13 @@ export default function PainelTutor() {
               value={especiePet}
               onChangeText={(value) => setEspeciePet(value)}
             />
+            <TextInput
+              placeholder='Peso (Opcional, ex: 5kg)'
+              style={styles.input}
+              value={pesoPet}
+              onChangeText={(value) => setPesoPet(value)}
+            />
+            
             <TouchableOpacity style={styles.btn} onPress={cadastrarPet}>
               <Text style={{ color: 'white', fontWeight: 'bold' }}>CADASTRAR PET</Text>
             </TouchableOpacity>
@@ -149,6 +164,10 @@ export default function PainelTutor() {
                 <Text style={styles.labelCard}>ESPÉCIE:</Text>
                 <Text style={styles.valorCard}>{item.especie}</Text>
               </View>
+              <View style={styles.linhaCard}>
+                <Text style={styles.labelCard}>PESO:</Text>
+                <Text style={styles.valorCard}>{item.peso ? item.peso : 'Não informado'}</Text>
+              </View>
               
               <TouchableOpacity 
                 style={styles.btnExcluir} 
@@ -159,6 +178,14 @@ export default function PainelTutor() {
             </View>
           );
         }}
+
+        ListFooterComponent={
+          <View style={styles.footerContainer}>
+            <TouchableOpacity style={styles.btnSairGrande} onPress={sair}>
+              <Text style={styles.textoBtnSairGrande}>SAIR DA CONTA</Text>
+            </TouchableOpacity>
+          </View>
+        }
       />
     </View>
   );
@@ -178,17 +205,17 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   titulo: {
-    fontSize: 22,
+    fontSize: 30,
     fontWeight: 'bold',
     color: 'blue'
   },
   subtitulo: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
     marginTop: 10
   },
   subtituloLista: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
     marginTop: 20,
     alignSelf: 'center'
@@ -257,5 +284,26 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     fontSize: 14,
+  },
+  
+  footerContainer: {
+    width: '100%',
+    alignItems: 'center',
+    marginTop: 30,
+    paddingBottom: 40,
+  },
+  btnSairGrande: {
+    backgroundColor: '#e53935', 
+    width: 300,
+    height: 55,
+    borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  textoBtnSairGrande: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
+    letterSpacing: 1, 
   }
 });
