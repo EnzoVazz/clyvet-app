@@ -1,9 +1,54 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function TelaInicial() {
+  const [documento, setDocumento] = useState('');
+
+  async function acessarSistema() {
+    // Remove espaços em branco
+    const docLimpo = documento.trim();
+
+    if (!docLimpo) {
+      Alert.alert("Erro", "Por favor, informe o seu CPF ou CRMV");
+      return;
+    }
+
+    let perfilUser = '';
+
+    if (docLimpo.length === 11 || docLimpo.length === 14) {
+      perfilUser = 'TUTOR';
+    } 
+    else if (docLimpo.length >= 4 && docLimpo.length <= 7) {
+      perfilUser = 'VETERINARIO';
+    } 
+    else {
+      Alert.alert("Erro", "Documento inválido. Digite um CPF ou CRMV válido.");
+      return;
+    }
+
+    await AsyncStorage.setItem("PERFIL", perfilUser); 
+    await AsyncStorage.setItem("DOCUMENTO", docLimpo);
+
+    Alert.alert("Sucesso", `Acesso liberado! Entrando como: ${perfilUser}`);
+
+    setDocumento('');
+  }
+
   return (
     <View style={styles.container}>
-      <Text>CLYVET - TELA INICIAL</Text>
+      <Text>ACESSO CLYVET</Text> 
+      
+      <TextInput
+        placeholder='DIGITE SEU CPF OU CRMV'
+        style={styles.input}
+        value={documento}
+        onChangeText={(value) => setDocumento(value)}
+      />
+      
+      <TouchableOpacity style={styles.btn} onPress={acessarSistema}>
+        <Text style={{ color: 'white' }}>ENTRAR</Text> 
+      </TouchableOpacity>
     </View>
   );
 }
@@ -14,5 +59,24 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+    gap: 10,
+    marginTop: 20
   },
+  input: {
+    borderWidth: 1,
+    height: 50,
+    width: 300,
+    borderRadius: 15,
+    paddingHorizontal: 15, 
+    textAlign: 'center'
+  },
+  btn: {
+    borderWidth: 1,
+    height: 50,
+    width: 300,
+    borderRadius: 15,
+    backgroundColor: 'blue',
+    justifyContent: 'center',
+    alignItems: 'center'
+  }
 });
