@@ -47,7 +47,7 @@ export default function PainelTutor() {
       return;
     }
 
-    let pets = [];
+    let pets: Pet[] = [];
     const petsSalvos = await AsyncStorage.getItem("PETS");
     if (petsSalvos !== null) {
       pets = JSON.parse(petsSalvos);
@@ -68,6 +68,26 @@ export default function PainelTutor() {
     setEspeciePet('');
     
     buscarPets();
+  }
+
+  // A função deletarPet agora está AQUI, fora da cadastrarPet e acessível pelo botão!
+  async function deletarPet(indexParaDeletar: number) {
+    Alert.alert(
+      "Excluir Pet",
+      "Tem certeza que deseja remover este pet da sua lista?",
+      [
+        { text: "Cancelar", style: "cancel" },
+        { 
+          text: "Excluir", 
+          style: "destructive",
+          onPress: async () => {
+            const novaLista = listaPets.filter((_, index) => index !== indexParaDeletar);
+            setListaPets(novaLista);
+            await AsyncStorage.setItem("PETS", JSON.stringify(novaLista));
+          }
+        }
+      ]
+    );
   }
 
   return (
@@ -113,7 +133,7 @@ export default function PainelTutor() {
           </View>
         }
 
-        renderItem={({ item }) => {
+        renderItem={({ item, index }) => {
           if (!item || !item.nome) return null;
           return (
             <View style={styles.cardPet}>
@@ -129,6 +149,13 @@ export default function PainelTutor() {
                 <Text style={styles.labelCard}>ESPÉCIE:</Text>
                 <Text style={styles.valorCard}>{item.especie}</Text>
               </View>
+              
+              <TouchableOpacity 
+                style={styles.btnExcluir} 
+                onPress={() => deletarPet(index)}
+              >
+                <Text style={styles.textoBtnExcluir}>Excluir Pet</Text>
+              </TouchableOpacity>
             </View>
           );
         }}
@@ -217,5 +244,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: '#333',
+  },
+  btnExcluir: {
+    marginTop: 15,
+    paddingVertical: 8,
+    backgroundColor: '#ff4444',
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  textoBtnExcluir: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 14,
   }
 });
