@@ -2,12 +2,12 @@ import { useState, useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function PainelTutor() {
+export default function PainelVeterinario() {
   const [docSalvo, setDocSalvo] = useState('');
 
   useEffect(() => {
     async function buscarDados() {
-      const doc = await AsyncStorage.getItem("DOCUMENTO"); 
+      const doc = await AsyncStorage.getItem("DOCUMENTO");
       if (doc) {
         setDocSalvo(doc);
       }
@@ -17,9 +17,9 @@ export default function PainelTutor() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.titulo}>Painel do Tutor</Text>
-      <Text>Bem-vindo à área de cuidados preventivos do seu pet!</Text>
-      <Text style={styles.doc}>Documento vinculado: {docSalvo}</Text>
+      <Text style={styles.titulo}>Painel do Médico Veterinário</Text>
+      <Text>Gestão de prontuários, consultas e retornos.</Text>
+      <Text style={styles.doc}>CRMV vinculado: {docSalvo}</Text>
     </View>
   );
 }
@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
   titulo: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: 'blue'
+    color: 'green' 
   },
   doc: {
     fontSize: 16,

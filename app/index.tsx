@@ -6,7 +6,6 @@ export default function TelaInicial() {
   const [documento, setDocumento] = useState('');
 
   async function acessarSistema() {
-    // Remove espaços em branco
     const docLimpo = documento.trim();
 
     if (!docLimpo) {
