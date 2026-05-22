@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { router } from 'expo-router';
 
 export default function TelaInicial() {
   const [documento, setDocumento] = useState('');
@@ -32,6 +33,12 @@ export default function TelaInicial() {
     Alert.alert("Sucesso", `Acesso liberado! Entrando como: ${perfilUser}`);
 
     setDocumento('');
+
+    if (perfilUser === 'TUTOR') {
+      router.push('/tutor');
+    } else {
+      router.push('/veterinario');
+    }
   }
 
   return (
