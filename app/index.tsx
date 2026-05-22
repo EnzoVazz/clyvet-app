@@ -1,10 +1,20 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 
 export default function TelaInicial() {
   const [documento, setDocumento] = useState('');
+
+  useEffect(() => {
+    async function carregarUltimoDocumento() {
+      const docSalvo = await AsyncStorage.getItem("DOCUMENTO");
+      if (docSalvo) {
+        setDocumento(docSalvo);
+      }
+    }
+    carregarUltimoDocumento();
+  }, []);
 
   async function acessarSistema() {
     const docLimpo = documento.trim();
@@ -18,11 +28,9 @@ export default function TelaInicial() {
 
     if (docLimpo.length === 11 || docLimpo.length === 14) {
       perfilUser = 'TUTOR';
-    } 
-    else if (docLimpo.length >= 4 && docLimpo.length <= 7) {
+    } else if (docLimpo.length >= 4 && docLimpo.length <= 7) {
       perfilUser = 'VETERINARIO';
-    } 
-    else {
+    } else {
       Alert.alert("Erro", "Documento inválido. Digite um CPF ou CRMV válido.");
       return;
     }
@@ -31,8 +39,6 @@ export default function TelaInicial() {
     await AsyncStorage.setItem("DOCUMENTO", docLimpo);
 
     Alert.alert("Sucesso", `Acesso liberado! Entrando como: ${perfilUser}`);
-
-    setDocumento('');
 
     if (perfilUser === 'TUTOR') {
       router.push('/tutor');
