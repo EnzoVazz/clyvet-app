@@ -1,102 +1,173 @@
 import { useState, useEffect } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, FlatList } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+type Pet = {
+  nome: string;
+  idade: string;
+  especie: string;
+};
 
 export default function PainelTutor() {
   const [docSalvo, setDocSalvo] = useState('');
   
-  // Estados separados para o cadastro do pet
   const [nomePet, setNomePet] = useState('');
   const [idadePet, setIdadePet] = useState('');
-  const [especiePet, setEspeciePet] = useState(''); // Novo estado
+  const [especiePet, setEspeciePet] = useState('');
+  
+  const [listaPets, setListaPets] = useState<Pet[]>([]);
 
-  // Busca o documento salvo no banco local assim que a tela abre
   useEffect(() => {
     async function buscarDados() {
       const doc = await AsyncStorage.getItem("DOCUMENTO");
-      if (doc) {
-        setDocSalvo(doc);
-      }
+      if (doc) setDocSalvo(doc);
     }
     buscarDados();
+    buscarPets();
   }, []);
 
-  // Função inicial apenas para validar os campos
+  async function buscarPets() {
+    const dados = await AsyncStorage.getItem("PETS");
+    if (dados) {
+      setListaPets(JSON.parse(dados));
+    }
+  }
+
   async function cadastrarPet() {
     if (!nomePet || nomePet.trim() === "") {
       Alert.alert("Erro", "Por favor, informe o nome do pet");
       return;
     }
     if (!idadePet || idadePet.trim() === "") {
-      Alert.alert("Erro", "Por favor, informe a idade do pet (ex: 2 anos)");
+      Alert.alert("Erro", "Por favor, informe a idade do pet");
       return;
     }
     if (!especiePet || especiePet.trim() === "") {
-      Alert.alert("Erro", "Por favor, informe a espécie do pet (ex: Cachorro, Gato)");
+      Alert.alert("Erro", "Por favor, informe a espécie do pet");
       return;
     }
 
-    Alert.alert("Sucesso", "Campos validados! Pet pronto para ser salvo.");
+    let pets = [];
+    const petsSalvos = await AsyncStorage.getItem("PETS");
+    if (petsSalvos !== null) {
+      pets = JSON.parse(petsSalvos);
+    }
+
+    pets.push({ 
+      nome: nomePet.trim(), 
+      idade: idadePet.trim(), 
+      especie: especiePet.trim() 
+    });
+
+    await AsyncStorage.setItem("PETS", JSON.stringify(pets));
+    
+    Alert.alert("Sucesso", "Pet cadastrado com sucesso!");
+
+    setNomePet('');
+    setIdadePet('');
+    setEspeciePet('');
+    
+    buscarPets();
   }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.titulo}>Painel do Tutor</Text>
-      <Text style={styles.doc}>CPF vinculado: {docSalvo}</Text>
-      
-      <Text style={styles.subtitulo}>CADASTRAR NOVO PET</Text>
-      
-      {/* Campos de entrada do Pet */}
-      <TextInput
-        placeholder='Digite o nome do pet'
-        style={styles.input}
-        value={nomePet}
-        onChangeText={(value) => setNomePet(value)}
-      />
+      <FlatList
+        data={listaPets}
+        keyExtractor={(item, index) => index.toString()}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 50 }}
+        
+        ListHeaderComponent={
+          <View style={styles.headerContainer}>
+            <Text style={styles.titulo}>Painel do Tutor</Text>
+            <Text style={styles.doc}>CPF vinculado: {docSalvo}</Text>
+            
+            <Text style={styles.subtitulo}>CADASTRAR NOVO PET</Text>
+            
+            <TextInput
+              placeholder='Digite o nome do pet'
+              style={styles.input}
+              value={nomePet}
+              onChangeText={(value) => setNomePet(value)}
+            />
+            <TextInput
+              placeholder='Digite a idade (ex: 3 anos)'
+              style={styles.input}
+              value={idadePet}
+              onChangeText={(value) => setIdadePet(value)}
+            />
+            <TextInput
+              placeholder='Digite a espécie (ex: Gato)'
+              style={styles.input}
+              value={especiePet}
+              onChangeText={(value) => setEspeciePet(value)}
+            />
+            <TouchableOpacity style={styles.btn} onPress={cadastrarPet}>
+              <Text style={{ color: 'white', fontWeight: 'bold' }}>CADASTRAR PET</Text>
+            </TouchableOpacity>
 
-      <TextInput
-        placeholder='Digite a idade (ex: 3 anos)'
-        style={styles.input}
-        value={idadePet}
-        onChangeText={(value) => setIdadePet(value)}
-      />
+            {listaPets.length > 0 && (
+              <Text style={styles.subtituloLista}>MEUS PETS</Text>
+            )}
+          </View>
+        }
 
-      <TextInput
-        placeholder='Digite a espécie (ex: Gato)'
-        style={styles.input}
-        value={especiePet}
-        onChangeText={(value) => setEspeciePet(value)}
+        renderItem={({ item }) => {
+          if (!item || !item.nome) return null;
+          return (
+            <View style={styles.cardPet}>
+              <View style={styles.linhaCard}>
+                <Text style={styles.labelCard}>NOME:</Text>
+                <Text style={styles.valorCard}>{item.nome}</Text>
+              </View>
+              <View style={styles.linhaCard}>
+                <Text style={styles.labelCard}>IDADE:</Text>
+                <Text style={styles.valorCard}>{item.idade}</Text>
+              </View>
+              <View style={styles.linhaCard}>
+                <Text style={styles.labelCard}>ESPÉCIE:</Text>
+                <Text style={styles.valorCard}>{item.especie}</Text>
+              </View>
+            </View>
+          );
+        }}
       />
-
-      {/* Botão de cadastro */}
-      <TouchableOpacity style={styles.btn} onPress={cadastrarPet}>
-        <Text style={{ color: 'white' }}>CADASTRAR PET</Text>
-      </TouchableOpacity>
     </View>
   );
 }
 
-// Estilos seguindo o padrão das aulas
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
+  },
+  headerContainer: {
+    alignItems: 'center',
     paddingTop: 50,
     gap: 15,
+    width: '100%',
+    paddingBottom: 20,
   },
   titulo: {
-    fontSize: 35,
+    fontSize: 22,
     fontWeight: 'bold',
     color: 'blue'
   },
   subtitulo: {
-    fontSize: 22,
+    fontSize: 18,
     fontWeight: 'bold',
-    marginTop: 20
+    marginTop: 10
+  },
+  subtituloLista: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginTop: 20,
+    alignSelf: 'center'
   },
   doc: {
-    fontSize: 18,
+    fontSize: 14,
     color: 'gray',
   },
   input: {
@@ -114,6 +185,37 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     backgroundColor: 'blue',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    marginBottom: 10
+  },
+  cardPet: {
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+    padding: 18,
+    width: 320,
+    marginVertical: 10,
+    borderLeftWidth: 6,
+    borderLeftColor: 'blue',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 4, 
+  },
+  linhaCard: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+  labelCard: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#888',
+  },
+  valorCard: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
   }
 });
