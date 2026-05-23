@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 
@@ -22,6 +22,18 @@ export default function TelaInicial() {
         if (!docLimpo) {
             Alert.alert("Erro", "Por favor, informe o seu CPF ou CRMV");
             return;
+        }
+
+        const usuariosSalvos = await AsyncStorage.getItem("USUARIOS_REGISTRADOS");
+        let usuariosCadastrados = [];
+        
+        if (usuariosSalvos !== null) {
+            usuariosCadastrados = JSON.parse(usuariosSalvos);
+        }
+
+        if (!usuariosCadastrados.includes(docLimpo)) {
+            Alert.alert("Acesso Negado", "Usuário não encontrado. Por favor, cadastre-se primeiro.");
+            return; 
         }
 
         let perfilUser = '';
@@ -48,24 +60,30 @@ export default function TelaInicial() {
     }
 
     return (
-        <View style={styles.container}>
-            <Text>ACESSO CLYVET</Text>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <KeyboardAvoidingView 
+                style={styles.container}
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            >
+                <Text style={styles.titulo}>ACESSO CLYVET</Text>
 
-            <TextInput
-                placeholder='DIGITE SEU CPF OU CRMV'
-                style={styles.input}
-                value={documento}
-                onChangeText={(value) => setDocumento(value)}
-            />
+                <TextInput
+                    placeholder='DIGITE SEU CPF OU CRMV'
+                    style={styles.input}
+                    value={documento}
+                    onChangeText={(value) => setDocumento(value)}
+                    keyboardType="numeric" 
+                />
 
-            <TouchableOpacity style={styles.btn} onPress={acessarSistema}>
-                <Text style={{ color: 'white' }}>ENTRAR</Text>
-            </TouchableOpacity>
+                <TouchableOpacity style={styles.btn} onPress={acessarSistema}>
+                    <Text style={styles.textoBtn}>ENTRAR</Text>
+                </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => router.push('/cadastro')} style={{ marginTop: 20 }}>
-                <Text style={{ color: 'gray', fontWeight: 'bold' }}>Não tem conta? Cadastre-se aqui</Text>
-            </TouchableOpacity>
-        </View>
+                <TouchableOpacity style={styles.btnLink} onPress={() => router.push('/cadastro')}>
+                    <Text style={styles.textoLink}>Não tem conta? Cadastre-se aqui</Text>
+                </TouchableOpacity>
+            </KeyboardAvoidingView>
+        </TouchableWithoutFeedback>
     );
 }
 
@@ -77,6 +95,12 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         gap: 10,
         marginTop: 20
+    },
+    titulo: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 20,
+        color: '#333'
     },
     input: {
         borderWidth: 1,
@@ -94,5 +118,17 @@ const styles = StyleSheet.create({
         backgroundColor: 'blue',
         justifyContent: 'center',
         alignItems: 'center'
+    },
+    textoBtn: {
+        color: 'white',
+        fontWeight: 'bold'
+    },
+    btnLink: {
+        marginTop: 20,
+        padding: 10
+    },
+    textoLink: {
+        color: 'gray',
+        fontWeight: 'bold'
     }
 });
