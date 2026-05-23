@@ -13,6 +13,8 @@ export default function Layout() {
       <Stack.Screen name="index" options={{ title: "Login" }} />
       <Stack.Screen name="tutor" options={{title: "Área do Tutor"}}/>
       <Stack.Screen name="veterinario" options={{title: "Área do Veterinário"}}/>
+      <Stack.Screen name="cadastro" options={{title: "Criar Conta"}}/>
+      
     </Stack>
   );
 }

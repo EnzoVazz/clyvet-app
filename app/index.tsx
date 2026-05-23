@@ -61,6 +61,10 @@ export default function TelaInicial() {
             <TouchableOpacity style={styles.btn} onPress={acessarSistema}>
                 <Text style={{ color: 'white' }}>ENTRAR</Text>
             </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => router.push('/cadastro')} style={{ marginTop: 20 }}>
+                <Text style={{ color: 'gray', fontWeight: 'bold' }}>Não tem conta? Cadastre-se aqui</Text>
+            </TouchableOpacity>
         </View>
     );
 }
