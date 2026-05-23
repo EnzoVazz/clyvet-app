@@ -8,6 +8,7 @@ type Pet = {
   idade: string;
   especie: string;
   peso: string;
+  diagnostico?: string; 
 };
 
 export default function PainelTutor() {
@@ -176,6 +177,14 @@ export default function PainelTutor() {
                 <Text style={styles.labelCard}>PESO:</Text>
                 <Text style={styles.valorCard}>{item.peso ? item.peso : 'Não informado'}</Text>
               </View>
+
+              {/* BLOCO DO DIAGNÓSTICO ADICIONADO AQUI */}
+              {item.diagnostico && (
+                <View style={styles.containerDiagnostico}>
+                  <Text style={styles.labelDiagnostico}>DIAGNÓSTICO / RECEITA DO VET:</Text>
+                  <Text style={styles.textoDiagnostico}>{item.diagnostico}</Text>
+                </View>
+              )}
               
               <TouchableOpacity 
                 style={styles.btnExcluir} 
@@ -280,6 +289,25 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#333',
   },
+  
+  containerDiagnostico: {
+    marginTop: 10,
+    paddingTop: 10,
+    borderTopWidth: 1,
+    borderTopColor: '#eee'
+  },
+  labelDiagnostico: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#888'
+  },
+  textoDiagnostico: {
+    fontSize: 14,
+    color: '#444',
+    marginTop: 4,
+    fontStyle: 'italic'
+  },
+
   btnExcluir: {
     marginTop: 15,
     paddingVertical: 8,
