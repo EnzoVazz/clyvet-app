@@ -90,6 +90,10 @@ export default function PainelVeterinario() {
           <View style={styles.headerContainer}>
             <Text style={styles.titulo}>Painel Veterinário</Text>
             <Text style={styles.doc}>CRMV vinculado: {crmvSalvo}</Text>
+
+            <TouchableOpacity style={styles.btnPerfil} onPress={() => router.push('/perfil')}>
+              <Text style={styles.textoBtnPerfil}>👤 Meu Perfil</Text>
+            </TouchableOpacity>
             
             <Text style={styles.subtitulo}>CONSULTAR PRONTUÁRIOS</Text>
             
@@ -355,5 +359,21 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
     letterSpacing: 1
-  }
+  },
+  btnPerfil: {
+    marginTop: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: '#e8f5e9',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: 'green', 
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  textoBtnPerfil: {
+    color: 'green', 
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
 });
