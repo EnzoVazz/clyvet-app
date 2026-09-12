@@ -132,7 +132,7 @@ O app consome a [ClyVet API](https://github.com/EnzoVazz/clyvet-api) (Java/Sprin
 ---
 ## 🎥 Vídeo de Demonstração
 
-[Assista ao vídeo aqui](COLE_O_LINK_DO_YOUTUBE_AQUI)
+[Assista ao vídeo aqui](https://youtu.be/ZJGM62yaydo)
 
 ---
 ## 📌 Objetivo do Projeto
