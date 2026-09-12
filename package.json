@@ -4,22 +4,32 @@
   "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
+    "api": "json-server --watch server/db.json --routes server/routes.json --port 3001 --host 0.0.0.0",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^2.2.0",
-    "@types/react": "~19.1.10",
-    "@types/react-native": "^0.72.8",
-    "expo": "~54.0.33",
-    "expo-router": "~6.0.23",
-    "expo-status-bar": "~3.0.9",
-    "react": "19.1.0",
-    "react-native": "0.81.5",
-    "react-native-safe-area-context": "~5.6.0",
-    "react-native-screens": "~4.16.0",
-    "typescript": "~5.9.2"
+    "@tanstack/react-query": "^5.102.8",
+    "@types/react": "~19.2.4",
+    "axios": "^1.20.0",
+    "expo": "^57.0.0",
+    "expo-constants": "~57.0.18",
+    "expo-linking": "~57.0.10",
+    "expo-router": "~57.0.21",
+    "expo-splash-screen": "~57.0.9",
+    "expo-status-bar": "~57.0.1",
+    "firebase": "^12.19.0",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-native": "0.86.3",
+    "react-native-safe-area-context": "~5.7.0",
+    "react-native-screens": "~4.26.0",
+    "typescript": "~6.0.3"
   },
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "json-server": "^0.17.4"
+  }
 }
