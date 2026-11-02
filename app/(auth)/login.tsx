@@ -7,17 +7,17 @@ import {
   StyleSheet,
   Text,
   TouchableWithoutFeedback,
-  View,
 } from 'react-native';
 import { Link, router } from 'expo-router';
 import { useAuth } from '../../src/contexts/AuthContext';
+import { useTheme } from '../../src/contexts/ThemeContext';
 import { PrimaryButton } from '../../src/components/PrimaryButton';
 import { TextField } from '../../src/components/TextField';
 import { getErrorMessage } from '../../src/utils/errors';
-import { colors } from '../../src/theme';
 
 export default function LoginScreen() {
   const { signIn } = useAuth();
+  const { colors } = useTheme();
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [loading, setLoading] = useState(false);
@@ -42,11 +42,13 @@ export default function LoginScreen() {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <KeyboardAvoidingView
-        style={styles.container}
+        style={[styles.container, { backgroundColor: colors.background }]}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        <Text style={styles.title}>Acesso Clyvet</Text>
-        <Text style={styles.subtitle}>Entre com sua conta para continuar o cuidado do pet.</Text>
+        <Text style={[styles.title, { color: colors.text }]}>Acesso Clyvet</Text>
+        <Text style={[styles.subtitle, { color: colors.muted }]}>
+          Entre com sua conta para continuar o cuidado do pet.
+        </Text>
 
         <TextField
           label="E-mail"
@@ -66,7 +68,7 @@ export default function LoginScreen() {
 
         <PrimaryButton title="ENTRAR" onPress={entrar} loading={loading} />
 
-        <Link href="/cadastro" style={styles.link}>
+        <Link href="/cadastro" style={[styles.link, { color: colors.primary }]}>
           Não tem conta? Cadastre-se aqui
         </Link>
       </KeyboardAvoidingView>
@@ -77,7 +79,6 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
     justifyContent: 'center',
     padding: 24,
     gap: 14,
@@ -85,16 +86,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: '800',
-    color: colors.text,
     textAlign: 'center',
   },
   subtitle: {
-    color: colors.muted,
     textAlign: 'center',
     marginBottom: 8,
   },
   link: {
-    color: colors.primary,
     fontWeight: '700',
     textAlign: 'center',
     marginTop: 8,

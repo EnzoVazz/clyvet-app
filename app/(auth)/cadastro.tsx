@@ -13,14 +13,15 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import { useAuth } from '../../src/contexts/AuthContext';
+import { useTheme } from '../../src/contexts/ThemeContext';
 import { PrimaryButton } from '../../src/components/PrimaryButton';
 import { TextField } from '../../src/components/TextField';
 import { getErrorMessage } from '../../src/utils/errors';
-import { colors } from '../../src/theme';
 import type { UserTipo } from '../../src/types';
 
 export default function CadastroScreen() {
   const { signUp } = useAuth();
+  const { colors } = useTheme();
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
@@ -53,25 +54,45 @@ export default function CadastroScreen() {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <KeyboardAvoidingView
-        style={styles.flex}
+        style={[styles.flex, { backgroundColor: colors.background }]}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <ScrollView contentContainerStyle={styles.container}>
-          <Text style={styles.title}>Criar conta</Text>
-          <Text style={styles.subtitle}>Cadastre-se para acessar pets e prontuários na API.</Text>
+          <Text style={[styles.title, { color: colors.text }]}>Criar conta</Text>
+          <Text style={[styles.subtitle, { color: colors.muted }]}>
+            Cadastre-se para acessar pets e prontuários na API.
+          </Text>
 
           <View style={styles.tipoRow}>
             <Pressable
               onPress={() => setTipo('TUTOR')}
-              style={[styles.tipoBtn, tipo === 'TUTOR' && styles.tipoAtivo]}
+              style={[
+                styles.tipoBtn,
+                {
+                  borderColor: tipo === 'TUTOR' ? colors.primary : colors.border,
+                  backgroundColor: tipo === 'TUTOR' ? colors.primary : colors.card,
+                },
+              ]}
             >
-              <Text style={[styles.tipoTexto, tipo === 'TUTOR' && styles.tipoTextoAtivo]}>Tutor</Text>
+              <Text style={[styles.tipoTexto, { color: tipo === 'TUTOR' ? '#fff' : colors.text }]}>
+                Tutor
+              </Text>
             </Pressable>
             <Pressable
               onPress={() => setTipo('VETERINARIO')}
-              style={[styles.tipoBtn, tipo === 'VETERINARIO' && styles.tipoVetAtivo]}
+              style={[
+                styles.tipoBtn,
+                {
+                  borderColor: tipo === 'VETERINARIO' ? colors.success : colors.border,
+                  backgroundColor: tipo === 'VETERINARIO' ? colors.success : colors.card,
+                },
+              ]}
             >
-              <Text style={[styles.tipoTexto, tipo === 'VETERINARIO' && styles.tipoTextoAtivo]}>Veterinário</Text>
+              <Text
+                style={[styles.tipoTexto, { color: tipo === 'VETERINARIO' ? '#fff' : colors.text }]}
+              >
+                Veterinário
+              </Text>
             </Pressable>
           </View>
 
@@ -115,7 +136,7 @@ export default function CadastroScreen() {
 }
 
 const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: colors.background },
+  flex: { flex: 1 },
   container: {
     padding: 24,
     gap: 12,
@@ -124,11 +145,9 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: '800',
-    color: colors.text,
     textAlign: 'center',
   },
   subtitle: {
-    color: colors.muted,
     textAlign: 'center',
     marginBottom: 8,
   },
@@ -139,25 +158,11 @@ const styles = StyleSheet.create({
   tipoBtn: {
     flex: 1,
     borderWidth: 1,
-    borderColor: colors.border,
     borderRadius: 12,
     paddingVertical: 12,
     alignItems: 'center',
-    backgroundColor: colors.card,
-  },
-  tipoAtivo: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
-  },
-  tipoVetAtivo: {
-    backgroundColor: colors.success,
-    borderColor: colors.success,
   },
   tipoTexto: {
     fontWeight: '700',
-    color: colors.text,
-  },
-  tipoTextoAtivo: {
-    color: '#fff',
   },
 });
