@@ -1,9 +1,10 @@
 import { Stack } from 'expo-router';
 import { useAuth } from '../../src/contexts/AuthContext';
-import { colors } from '../../src/theme';
+import { useTheme } from '../../src/contexts/ThemeContext';
 
 export default function AppLayout() {
   const { profile } = useAuth();
+  const { colors } = useTheme();
   const isVet = profile?.tipo === 'VETERINARIO';
 
   return (
@@ -11,6 +12,7 @@ export default function AppLayout() {
       screenOptions={{
         headerStyle: { backgroundColor: colors.header },
         headerTintColor: '#fff',
+        contentStyle: { backgroundColor: colors.background },
       }}
     >
       <Stack.Screen name="index" options={{ title: 'Clyvet' }} />
@@ -21,6 +23,7 @@ export default function AppLayout() {
         <Stack.Screen name="prontuarios/form" options={{ title: 'Prontuário' }} />
       </Stack.Protected>
       <Stack.Screen name="perfil" options={{ title: 'Meu perfil' }} />
+      <Stack.Screen name="sobre" options={{ title: 'Sobre o App' }} />
     </Stack>
   );
 }

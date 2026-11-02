@@ -1,30 +1,38 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { useAuth } from '../../src/contexts/AuthContext';
+import { useTheme } from '../../src/contexts/ThemeContext';
 import { PrimaryButton } from '../../src/components/PrimaryButton';
-import { colors } from '../../src/theme';
 import { getApiBaseUrl } from '../../src/services/api';
 
 export default function HomeScreen() {
   const { profile, user, signOut } = useAuth();
+  const { colors } = useTheme();
   const isTutor = profile?.tipo !== 'VETERINARIO';
   const accent = isTutor ? colors.primary : colors.success;
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <Text style={[styles.kicker, { color: accent }]}>
         {isTutor ? 'Área do Tutor' : 'Área do Veterinário'}
       </Text>
-      <Text style={styles.title}>Olá, {profile?.nome ?? user?.displayName ?? 'bem-vindo'}</Text>
-      <Text style={styles.subtitle}>
+      <Text style={[styles.title, { color: colors.text }]}>
+        Olá, {profile?.nome ?? user?.displayName ?? 'bem-vindo'}
+      </Text>
+      <Text style={[styles.subtitle, { color: colors.muted }]}>
         {isTutor
           ? 'Aqui você acompanha somente os pets cadastrados na sua conta.'
           : 'Aqui você vê todos os pets da clínica e atualiza os prontuários.'}
       </Text>
 
-      <Pressable style={[styles.card, { borderLeftColor: accent }]} onPress={() => router.push('/pets')}>
-        <Text style={styles.cardTitle}>{isTutor ? 'Meus pets' : 'Todos os pets'}</Text>
-        <Text style={styles.cardText}>
+      <Pressable
+        style={[styles.card, { backgroundColor: colors.card, borderLeftColor: accent }]}
+        onPress={() => router.push('/pets')}
+      >
+        <Text style={[styles.cardTitle, { color: colors.text }]}>
+          {isTutor ? 'Meus pets' : 'Todos os pets'}
+        </Text>
+        <Text style={[styles.cardText, { color: colors.muted }]}>
           {isTutor
             ? 'Cadastrar, consultar, editar e excluir os seus animais.'
             : 'Consultar a base completa e manter o cadastro dos animais.'}
@@ -32,18 +40,38 @@ export default function HomeScreen() {
       </Pressable>
 
       {!isTutor ? (
-        <Pressable style={[styles.card, { borderLeftColor: accent }]} onPress={() => router.push('/prontuarios')}>
-          <Text style={styles.cardTitle}>Prontuários</Text>
-          <Text style={styles.cardText}>Registrar diagnósticos e atualizar o histórico clínico.</Text>
+        <Pressable
+          style={[styles.card, { backgroundColor: colors.card, borderLeftColor: accent }]}
+          onPress={() => router.push('/prontuarios')}
+        >
+          <Text style={[styles.cardTitle, { color: colors.text }]}>Prontuários</Text>
+          <Text style={[styles.cardText, { color: colors.muted }]}>
+            Registrar diagnósticos e atualizar o histórico clínico.
+          </Text>
         </Pressable>
       ) : null}
 
-      <Pressable style={[styles.card, { borderLeftColor: accent }]} onPress={() => router.push('/perfil')}>
-        <Text style={styles.cardTitle}>Meu perfil</Text>
-        <Text style={styles.cardText}>Ver dados da sessão, sair ou excluir a conta.</Text>
+      <Pressable
+        style={[styles.card, { backgroundColor: colors.card, borderLeftColor: accent }]}
+        onPress={() => router.push('/perfil')}
+      >
+        <Text style={[styles.cardTitle, { color: colors.text }]}>Meu perfil</Text>
+        <Text style={[styles.cardText, { color: colors.muted }]}>
+          Ver dados da sessão, tema, sair ou excluir a conta.
+        </Text>
       </Pressable>
 
-      <Text style={styles.api}>API: {getApiBaseUrl()}</Text>
+      <Pressable
+        style={[styles.card, { backgroundColor: colors.card, borderLeftColor: accent }]}
+        onPress={() => router.push('/sobre')}
+      >
+        <Text style={[styles.cardTitle, { color: colors.text }]}>Sobre o App</Text>
+        <Text style={[styles.cardText, { color: colors.muted }]}>
+          Versão publicada e hash do commit de referência.
+        </Text>
+      </Pressable>
+
+      <Text style={[styles.api, { color: colors.muted }]}>API: {getApiBaseUrl()}</Text>
       <PrimaryButton title="SAIR DA CONTA" variant="danger" onPress={signOut} />
     </View>
   );
@@ -52,7 +80,6 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
     padding: 20,
     gap: 12,
   },
@@ -64,14 +91,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: '800',
-    color: colors.text,
   },
   subtitle: {
-    color: colors.muted,
     marginBottom: 8,
   },
   card: {
-    backgroundColor: colors.card,
     borderRadius: 16,
     padding: 16,
     borderLeftWidth: 6,
@@ -80,13 +104,9 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 18,
     fontWeight: '800',
-    color: colors.text,
   },
-  cardText: {
-    color: colors.muted,
-  },
+  cardText: {},
   api: {
-    color: colors.muted,
     fontSize: 12,
     marginTop: 'auto',
   },
