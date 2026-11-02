@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { notificationsService } from '../services/notificationsService';
 import { prontuariosService } from '../services/prontuariosService';
 import type { ProntuarioInput } from '../types';
 
@@ -26,6 +27,7 @@ export function useCreateProntuario() {
     mutationFn: (input: ProntuarioInput) => prontuariosService.create(input),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: PRONTUARIOS_KEY });
+      void notificationsService.avisarProntuarioRegistrado();
     },
   });
 }

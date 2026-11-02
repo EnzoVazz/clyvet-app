@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../contexts/AuthContext';
 import { petsService } from '../services/petsService';
+import { notificationsService } from '../services/notificationsService';
 import { tutoresService } from '../services/usersService';
 import type { PetInput } from '../types';
 
@@ -69,8 +70,9 @@ export function useCreatePet() {
 
       return petsService.create({ ...input, idTutor: tutorId });
     },
-    onSuccess: () => {
+    onSuccess: (pet, input) => {
       queryClient.invalidateQueries({ queryKey: PETS_KEY });
+      void notificationsService.avisarPetCadastrado(pet.nome ?? input.nome);
     },
   });
 }

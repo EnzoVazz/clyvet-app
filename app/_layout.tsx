@@ -1,19 +1,24 @@
 import { QueryClientProvider } from '@tanstack/react-query';
 import { Stack, SplashScreen } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { AuthProvider, useAuth } from '../src/contexts/AuthContext';
+import { ThemeProvider, useTheme } from '../src/contexts/ThemeContext';
+import { useNotificationObserver } from '../src/hooks/useNotificationObserver';
 import { queryClient } from '../src/config/queryClient';
-import { colors } from '../src/theme';
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <SplashController />
-        <RootNavigator />
-      </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <SplashController />
+          <NotificationBridge />
+          <RootNavigator />
+        </AuthProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }
@@ -30,26 +35,32 @@ function SplashController() {
   return null;
 }
 
-function RootNavigator() {
-  const { user, isLoading } = useAuth();
+function NotificationBridge() {
+  useNotificationObserver();
+  return null;
+}
 
-  if (isLoading) {
-    return null;
-  }
+function RootNavigator() {
+  const { user } = useAuth();
+  const { colors, scheme } = useTheme();
 
   return (
-    <Stack
-      screenOptions={{
-        headerStyle: { backgroundColor: colors.header },
-        headerTintColor: '#fff',
-      }}
-    >
-      <Stack.Protected guard={!!user}>
-        <Stack.Screen name="(app)" options={{ headerShown: false }} />
-      </Stack.Protected>
-      <Stack.Protected guard={!user}>
-        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-      </Stack.Protected>
-    </Stack>
+    <>
+      <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
+      <Stack
+        screenOptions={{
+          headerStyle: { backgroundColor: colors.header },
+          headerTintColor: '#fff',
+          contentStyle: { backgroundColor: colors.background },
+        }}
+      >
+        <Stack.Protected guard={!!user} redirectTo="/login">
+          <Stack.Screen name="(app)" options={{ headerShown: false }} />
+        </Stack.Protected>
+        <Stack.Protected guard={!user} redirectTo="/">
+          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+        </Stack.Protected>
+      </Stack>
+    </>
   );
 }
