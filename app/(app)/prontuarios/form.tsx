@@ -4,11 +4,11 @@ import { Stack, Redirect, router, useLocalSearchParams } from 'expo-router';
 import { usePets } from '../../../src/hooks/usePets';
 import { useCreateProntuario, useProntuario, useUpdateProntuario } from '../../../src/hooks/useProntuarios';
 import { useAuth } from '../../../src/contexts/AuthContext';
+import { useTheme } from '../../../src/contexts/ThemeContext';
 import { LoadingState } from '../../../src/components/Feedback';
 import { PrimaryButton } from '../../../src/components/PrimaryButton';
 import { TextField } from '../../../src/components/TextField';
 import { getErrorMessage } from '../../../src/utils/errors';
-import { colors } from '../../../src/theme';
 
 function hojeIso() {
   return new Date().toISOString().slice(0, 10);
@@ -16,6 +16,7 @@ function hojeIso() {
 
 export default function ProntuarioFormScreen() {
   const { profile } = useAuth();
+  const { colors } = useTheme();
   const params = useLocalSearchParams<{ id?: string }>();
   const prontuarioId = params.id ? Number(params.id) : undefined;
   const isEditing = Number.isFinite(prontuarioId);
@@ -74,12 +75,12 @@ export default function ProntuarioFormScreen() {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={[styles.container, { backgroundColor: colors.background }]}>
       <Stack.Screen options={{ title: isEditing ? 'Editar prontuário' : 'Novo prontuário' }} />
 
-      <Text style={styles.label}>Pet vinculado</Text>
+      <Text style={[styles.label, { color: colors.muted }]}>Pet vinculado</Text>
       {(petsQuery.data ?? []).length === 0 ? (
-        <Text style={styles.emptyPets}>Nenhum pet cadastrado na API para vincular.</Text>
+        <Text style={{ color: colors.muted }}>Nenhum pet cadastrado na API para vincular.</Text>
       ) : null}
       <View style={styles.pets}>
         {(petsQuery.data ?? []).map((pet) => {
@@ -88,9 +89,15 @@ export default function ProntuarioFormScreen() {
             <Pressable
               key={pet.id}
               onPress={() => setIdPet(pet.id)}
-              style={[styles.chip, ativo && styles.chipAtivo]}
+              style={[
+                styles.chip,
+                {
+                  borderColor: ativo ? colors.success : colors.border,
+                  backgroundColor: ativo ? colors.success : colors.card,
+                },
+              ]}
             >
-              <Text style={[styles.chipTexto, ativo && styles.chipTextoAtivo]}>{pet.nome}</Text>
+              <Text style={[styles.chipTexto, { color: ativo ? '#fff' : colors.text }]}>{pet.nome}</Text>
             </Pressable>
           );
         })}
@@ -100,7 +107,7 @@ export default function ProntuarioFormScreen() {
         label="Data (AAAA-MM-DD)"
         value={dataRegistro}
         onChangeText={setDataRegistro}
-        placeholder="2026-09-11"
+        placeholder="2026-11-02"
       />
       <TextField
         label="Diagnóstico / conduta"
@@ -123,17 +130,12 @@ const styles = StyleSheet.create({
   container: {
     padding: 20,
     gap: 12,
-    backgroundColor: colors.background,
     flexGrow: 1,
   },
   label: {
     fontSize: 13,
     fontWeight: '700',
-    color: colors.muted,
     textTransform: 'uppercase',
-  },
-  emptyPets: {
-    color: colors.muted,
   },
   pets: {
     flexDirection: 'row',
@@ -142,21 +144,11 @@ const styles = StyleSheet.create({
   },
   chip: {
     borderWidth: 1,
-    borderColor: colors.border,
     borderRadius: 999,
     paddingHorizontal: 12,
     paddingVertical: 8,
-    backgroundColor: colors.card,
-  },
-  chipAtivo: {
-    backgroundColor: colors.success,
-    borderColor: colors.success,
   },
   chipTexto: {
     fontWeight: '700',
-    color: colors.text,
-  },
-  chipTextoAtivo: {
-    color: '#fff',
   },
 });

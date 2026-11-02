@@ -1,16 +1,17 @@
 import { Alert, FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
 import { Redirect, router } from 'expo-router';
 import { useAuth } from '../../../src/contexts/AuthContext';
+import { useTheme } from '../../../src/contexts/ThemeContext';
 import { useDeleteProntuario, useProntuarios } from '../../../src/hooks/useProntuarios';
 import { usePets } from '../../../src/hooks/usePets';
 import { EmptyState, ErrorState, LoadingState } from '../../../src/components/Feedback';
 import { PrimaryButton } from '../../../src/components/PrimaryButton';
 import { getErrorMessage } from '../../../src/utils/errors';
-import { colors } from '../../../src/theme';
 import type { Prontuario } from '../../../src/types';
 
 export default function ProntuariosScreen() {
   const { profile } = useAuth();
+  const { colors } = useTheme();
   const prontuariosQuery = useProntuarios();
   const petsQuery = usePets();
   const deleteProntuario = useDeleteProntuario();
@@ -52,7 +53,7 @@ export default function ProntuariosScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <PrimaryButton title="NOVO PRONTUÁRIO" variant="success" onPress={() => router.push('/prontuarios/form')} />
       <FlatList
         data={prontuariosQuery.data}
@@ -65,10 +66,10 @@ export default function ProntuariosScreen() {
           <EmptyState title="Nenhum prontuário" subtitle="Registre um diagnóstico para ver a integração com a API." />
         }
         renderItem={({ item }) => (
-          <View style={styles.card}>
-            <Text style={styles.pet}>{nomeDoPet(item.idPet)}</Text>
-            <Text style={styles.data}>{item.dataRegistro}</Text>
-            <Text style={styles.diagnostico}>{item.diagnostico}</Text>
+          <View style={[styles.card, { backgroundColor: colors.card, borderLeftColor: colors.success }]}>
+            <Text style={[styles.pet, { color: colors.text }]}>{nomeDoPet(item.idPet)}</Text>
+            <Text style={[styles.data, { color: colors.muted }]}>{item.dataRegistro}</Text>
+            <Text style={[styles.diagnostico, { color: colors.text }]}>{item.diagnostico}</Text>
             <View style={styles.actions}>
               <View style={styles.action}>
                 <PrimaryButton title="Editar" variant="success" onPress={() => router.push(`/prontuarios/form?id=${item.id}`)} />
@@ -92,7 +93,6 @@ export default function ProntuariosScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
     padding: 16,
     gap: 12,
   },
@@ -101,24 +101,17 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   card: {
-    backgroundColor: colors.card,
     borderRadius: 16,
     padding: 16,
     borderLeftWidth: 6,
-    borderLeftColor: colors.success,
     gap: 6,
   },
   pet: {
     fontSize: 18,
     fontWeight: '800',
-    color: colors.text,
   },
-  data: {
-    color: colors.muted,
-  },
-  diagnostico: {
-    color: colors.text,
-  },
+  data: {},
+  diagnostico: {},
   actions: {
     flexDirection: 'row',
     gap: 8,
