@@ -36,6 +36,18 @@ Dependendo do tipo de conta criada no cadastro (**Tutor** ou **Veterinário**), 
 - Sessão persistida — o usuário não precisa logar novamente ao reabrir o app
 - Rotas protegidas por perfil: telas de Tutor e Veterinário só são acessíveis a quem está autenticado e tem o perfil correspondente
 
+### 🌙 Tema
+- Modo claro e modo escuro, com troca no perfil
+- A preferência fica salva no aparelho
+
+### 🔔 Notificações
+- Notificação **local** disparada por um evento real do sistema
+- Tutor: ao cadastrar um pet, o app agenda o aviso de acompanhamento clínico (abre a lista de pets)
+- Veterinário: ao registrar um prontuário, o app agenda o aviso de retorno clínico (abre o histórico)
+
+### ℹ️ Sobre o App
+- Tela com a versão e o **hash do commit** usado na publicação
+
 ---
 
 ## 🛠 Tecnologias Utilizadas
@@ -46,7 +58,8 @@ Dependendo do tipo de conta criada no cadastro (**Tutor** ou **Veterinário**), 
 - **Firebase Authentication**
 - **TanStack Query** (`useQuery` / `useMutation`) para toda a comunicação com a API
 - **Axios**
-- **AsyncStorage** (apenas para cache local do perfil do usuário)
+- **AsyncStorage** (perfil do usuário e preferência de tema)
+- **expo-notifications** (notificações locais)
 
 ### 📌 Estrutura de Navegação
 O projeto utiliza **Expo Router** com rotas organizadas em dois grupos, protegidas de acordo com o estado de autenticação:
@@ -62,6 +75,7 @@ O projeto utiliza **Expo Router** com rotas organizadas em dois grupos, protegid
 6. Prontuários (exclusivo Veterinário)
 7. Formulário de Prontuário (exclusivo Veterinário)
 8. Meu Perfil
+9. Sobre o App
 
 ### 💾 Persistência de Dados
 Todos os dados de pets e prontuários são armazenados e consultados diretamente na **ClyVet API**, que persiste em banco Oracle na nuvem. O CRUD completo (Create, Read, Update, Delete) é feito via requisições HTTP reais, com estado de carregamento e atualização automática da tela após cada operação. O **AsyncStorage** hoje só guarda o perfil do usuário logado localmente, para não precisar buscar isso na API a cada abertura do app.
