@@ -1,15 +1,16 @@
 import { Alert, FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { useAuth } from '../../../src/contexts/AuthContext';
+import { useTheme } from '../../../src/contexts/ThemeContext';
 import { useDeletePet, usePets } from '../../../src/hooks/usePets';
 import { EmptyState, ErrorState, LoadingState } from '../../../src/components/Feedback';
 import { PrimaryButton } from '../../../src/components/PrimaryButton';
 import { getErrorMessage } from '../../../src/utils/errors';
-import { colors } from '../../../src/theme';
 import type { Pet } from '../../../src/types';
 
 export default function PetsScreen() {
   const { profile } = useAuth();
+  const { colors } = useTheme();
   const petsQuery = usePets();
   const deletePet = useDeletePet();
   const isTutor = profile?.tipo !== 'VETERINARIO';
@@ -37,7 +38,7 @@ export default function PetsScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <PrimaryButton title="CADASTRAR PET" onPress={() => router.push('/pets/form')} />
       <FlatList
         data={petsQuery.data}
@@ -57,10 +58,12 @@ export default function PetsScreen() {
           />
         }
         renderItem={({ item }) => (
-          <View style={styles.card}>
-            <Text style={styles.nome}>{item.nome}</Text>
-            <Text style={styles.meta}>{item.especie} · {item.cor} · {item.idade} anos · {item.peso} kg</Text>
-            <Text style={styles.alerta}>{item.alertaClinico}</Text>
+          <View style={[styles.card, { backgroundColor: colors.card, borderLeftColor: colors.primary }]}>
+            <Text style={[styles.nome, { color: colors.text }]}>{item.nome}</Text>
+            <Text style={[styles.meta, { color: colors.muted }]}>
+              {item.especie} · {item.cor} · {item.idade} anos · {item.peso} kg
+            </Text>
+            <Text style={[styles.alerta, { color: colors.text }]}>{item.alertaClinico}</Text>
             <View style={styles.actions}>
               <View style={styles.action}>
                 <PrimaryButton title="Editar" onPress={() => router.push(`/pets/form?id=${item.id}`)} />
@@ -84,7 +87,6 @@ export default function PetsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
     padding: 16,
     gap: 12,
   },
@@ -93,23 +95,17 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   card: {
-    backgroundColor: colors.card,
     borderRadius: 16,
     padding: 16,
     borderLeftWidth: 6,
-    borderLeftColor: colors.primary,
     gap: 6,
   },
   nome: {
     fontSize: 20,
     fontWeight: '800',
-    color: colors.text,
   },
-  meta: {
-    color: colors.muted,
-  },
+  meta: {},
   alerta: {
-    color: colors.text,
     fontStyle: 'italic',
   },
   actions: {

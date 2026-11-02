@@ -2,18 +2,19 @@ import { useEffect, useState } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
 import { useAuth } from '../../../src/contexts/AuthContext';
+import { useTheme } from '../../../src/contexts/ThemeContext';
 import { useCreatePet, usePet, useTutores, useUpdatePet } from '../../../src/hooks/usePets';
 import { LoadingState } from '../../../src/components/Feedback';
 import { PrimaryButton } from '../../../src/components/PrimaryButton';
 import { TextField } from '../../../src/components/TextField';
 import { getErrorMessage } from '../../../src/utils/errors';
-import { colors } from '../../../src/theme';
 
 export default function PetFormScreen() {
   const params = useLocalSearchParams<{ id?: string }>();
   const petId = params.id ? Number(params.id) : undefined;
   const isEditing = Number.isFinite(petId);
   const { profile } = useAuth();
+  const { colors } = useTheme();
   const isVeterinario = profile?.tipo === 'VETERINARIO';
 
   const petQuery = usePet(petId);
@@ -76,7 +77,7 @@ export default function PetFormScreen() {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={[styles.container, { backgroundColor: colors.background }]}>
       <Stack.Screen options={{ title: isEditing ? 'Editar pet' : 'Novo pet' }} />
       <TextField label="Nome" value={nome} onChangeText={setNome} placeholder="Luna" />
       <TextField label="Espécie" value={especie} onChangeText={setEspecie} placeholder="Cão ou Gato" />
@@ -86,7 +87,7 @@ export default function PetFormScreen() {
 
       {isVeterinario ? (
         <>
-          <Text style={styles.label}>Tutor responsável</Text>
+          <Text style={[styles.label, { color: colors.muted }]}>Tutor responsável</Text>
           <View style={styles.chips}>
             {(tutoresQuery.data ?? []).map((tutor) => {
               const ativo = idTutor === tutor.id;
@@ -94,9 +95,17 @@ export default function PetFormScreen() {
                 <Pressable
                   key={tutor.id}
                   onPress={() => setIdTutor(tutor.id)}
-                  style={[styles.chip, ativo && styles.chipAtivo]}
+                  style={[
+                    styles.chip,
+                    {
+                      borderColor: ativo ? colors.primary : colors.border,
+                      backgroundColor: ativo ? colors.primary : colors.card,
+                    },
+                  ]}
                 >
-                  <Text style={[styles.chipTexto, ativo && styles.chipTextoAtivo]}>{tutor.nome}</Text>
+                  <Text style={[styles.chipTexto, { color: ativo ? '#fff' : colors.text }]}>
+                    {tutor.nome}
+                  </Text>
                 </Pressable>
               );
             })}
@@ -117,13 +126,11 @@ const styles = StyleSheet.create({
   container: {
     padding: 20,
     gap: 12,
-    backgroundColor: colors.background,
     flexGrow: 1,
   },
   label: {
     fontSize: 13,
     fontWeight: '700',
-    color: colors.muted,
     textTransform: 'uppercase',
   },
   chips: {
@@ -133,21 +140,11 @@ const styles = StyleSheet.create({
   },
   chip: {
     borderWidth: 1,
-    borderColor: colors.border,
     borderRadius: 999,
     paddingHorizontal: 12,
     paddingVertical: 8,
-    backgroundColor: colors.card,
-  },
-  chipAtivo: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
   },
   chipTexto: {
     fontWeight: '700',
-    color: colors.text,
-  },
-  chipTextoAtivo: {
-    color: '#fff',
   },
 });
