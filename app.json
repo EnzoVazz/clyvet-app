@@ -6,7 +6,7 @@
     "scheme": "clyvet",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true
     },
@@ -22,6 +22,7 @@
     "plugins": [
       "expo-router",
       "expo-status-bar",
+      "expo-notifications",
       [
         "expo-splash-screen",
         {
