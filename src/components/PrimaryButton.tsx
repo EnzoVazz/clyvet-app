@@ -5,7 +5,7 @@ import {
   Text,
   type PressableProps,
 } from 'react-native';
-import { colors } from '../theme';
+import { useTheme } from '../contexts/ThemeContext';
 
 type Props = PressableProps & {
   title: string;
@@ -14,8 +14,15 @@ type Props = PressableProps & {
 };
 
 export function PrimaryButton({ title, loading, variant = 'primary', disabled, ...props }: Props) {
+  const { colors } = useTheme();
   const backgroundColor =
-    variant === 'success' ? colors.success : variant === 'danger' ? colors.danger : variant === 'ghost' ? 'transparent' : colors.primary;
+    variant === 'success'
+      ? colors.success
+      : variant === 'danger'
+        ? colors.danger
+        : variant === 'ghost'
+          ? 'transparent'
+          : colors.primary;
 
   return (
     <Pressable
@@ -27,7 +34,9 @@ export function PrimaryButton({ title, loading, variant = 'primary', disabled, .
         (disabled || loading) && styles.disabled,
       ]}
     >
-      {loading ? <ActivityIndicator color={variant === 'ghost' ? colors.text : '#fff'} /> : (
+      {loading ? (
+        <ActivityIndicator color={variant === 'ghost' ? colors.text : '#fff'} />
+      ) : (
         <Text style={[styles.text, variant === 'ghost' && { color: colors.text }]}>{title}</Text>
       )}
     </Pressable>

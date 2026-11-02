@@ -1,17 +1,25 @@
 import { StyleSheet, Text, TextInput, View, type TextInputProps } from 'react-native';
-import { colors } from '../theme';
+import { useTheme } from '../contexts/ThemeContext';
 
 type Props = TextInputProps & {
   label: string;
 };
 
 export function TextField({ label, ...props }: Props) {
+  const { colors } = useTheme();
   return (
     <View style={styles.wrapper}>
-      <Text style={styles.label}>{label}</Text>
+      <Text style={[styles.label, { color: colors.muted }]}>{label}</Text>
       <TextInput
         placeholderTextColor={colors.muted}
-        style={styles.input}
+        style={[
+          styles.input,
+          {
+            borderColor: colors.border,
+            backgroundColor: colors.card,
+            color: colors.text,
+          },
+        ]}
         {...props}
       />
     </View>
@@ -26,16 +34,12 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 13,
     fontWeight: '700',
-    color: colors.muted,
     textTransform: 'uppercase',
   },
   input: {
     borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.card,
     borderRadius: 14,
     minHeight: 50,
     paddingHorizontal: 14,
-    color: colors.text,
   },
 });
