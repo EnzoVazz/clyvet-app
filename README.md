@@ -144,9 +144,16 @@ Após iniciar o projeto:
 O app consome a [ClyVet API](https://github.com/EnzoVazz/clyvet-api) (Java/Spring Boot), publicada em `https://clyvet-api.onrender.com`, responsável por toda a persistência de Pets, Tutores, Veterinários e Prontuários.
 
 ---
+## 📦 Publicação (Sprint 4)
+
+O APK Android **1.0.0 (1)** foi gerado com EAS (`preview`) e publicado no **Firebase App Distribution**. O professor da FIAP foi adicionado como tester pelo e-mail institucional `pf1963@fiap.com.br`.
+
+![Firebase App Distribution — versão 1.0.0 com o professor convidado](./docs/firebase-app-distribution.png)
+
+---
 ## 🎥 Vídeo de Demonstração
 
-[Assista ao vídeo aqui](https://youtu.be/ZJGM62yaydo)
+[Assista ao vídeo da Sprint 4](https://www.youtube.com/shorts/2ARH3fGEGBI)
 
 ---
 ## 📌 Objetivo do Projeto
