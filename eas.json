@@ -1,0 +1,24 @@
+{
+  "cli": {
+    "version": ">= 16.28.0",
+    "appVersionSource": "local"
+  },
+  "build": {
+    "preview": {
+      "environment": "preview",
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://clyvet-api.onrender.com",
+        "EXPO_PUBLIC_FIREBASE_API_KEY": "AIzaSyDHhrGfvfOkpqqddBXacEQwBkh-aXXAhwM",
+        "EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN": "clyvet-mobile.firebaseapp.com",
+        "EXPO_PUBLIC_FIREBASE_PROJECT_ID": "clyvet-mobile",
+        "EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET": "clyvet-mobile.firebasestorage.app",
+        "EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID": "341700240238",
+        "EXPO_PUBLIC_FIREBASE_APP_ID": "1:341700240238:web:5c486c69d6405035e9177f"
+      }
+    }
+  }
+}

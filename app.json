@@ -11,6 +11,7 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "br.com.fiap.clyvet",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -31,6 +32,17 @@
           "imageWidth": 200
         }
       ]
-    ]
+    ],
+    "extra": {
+      "gitCommit": "bf1bfd80be8d9503a6f9dd3023b536bc4ac4598f",
+      "router": {
+        "asyncRoutes": {
+          "web": true
+        }
+      },
+      "eas": {
+        "projectId": "2ce3ff62-a98b-4a46-bdbe-4c7428699b70"
+      }
+    }
   }
 }
