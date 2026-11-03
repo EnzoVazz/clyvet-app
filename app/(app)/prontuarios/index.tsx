@@ -39,7 +39,7 @@ export default function ProntuariosScreen() {
     ]);
   }
 
-  if (prontuariosQuery.isPending) {
+  if (prontuariosQuery.isLoading) {
     return <LoadingState />;
   }
 

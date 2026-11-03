@@ -7,6 +7,19 @@ function isNotFound(error: unknown): boolean {
   return axios.isAxiosError(error) && error.response?.status === 404;
 }
 
+function documentoParaCpf(documento: string, uid?: string): string {
+  const trimmed = documento.trim();
+  if (trimmed) {
+    return trimmed;
+  }
+  const seed = uid ?? 'clyvet';
+  let total = 0;
+  for (let i = 0; i < seed.length; i += 1) {
+    total = (total + seed.charCodeAt(i) * (i + 1)) % 100000000000;
+  }
+  return String(total).padStart(11, '0');
+}
+
 export const tutoresService = {
   async list(): Promise<Tutor[]> {
     const { data } = await api.get('/api/tutores');
@@ -31,15 +44,18 @@ export const tutoresService = {
     return data;
   },
 
-  async ensure(profile: Pick<UserProfile, 'nome' | 'documento' | 'telefone'>): Promise<Tutor> {
-    const existing = await this.findByCpf(profile.documento);
-    if (existing?.id) {
-      return existing;
+  async ensure(profile: Pick<UserProfile, 'uid' | 'nome' | 'documento' | 'telefone'>): Promise<Tutor> {
+    const cpf = documentoParaCpf(profile.documento, profile.uid);
+    if (cpf) {
+      const existing = await this.findByCpf(cpf);
+      if (existing?.id) {
+        return existing;
+      }
     }
     return this.create({
       nome: profile.nome,
-      cpf: profile.documento,
-      telefone: profile.telefone,
+      cpf,
+      telefone: profile.telefone || '00000000000',
     });
   },
 };

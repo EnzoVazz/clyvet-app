@@ -4,18 +4,12 @@ import type { Pet, PetInput } from '../types';
 
 export const petsService = {
   async list(tutorId?: number): Promise<Pet[]> {
-    if (tutorId) {
-      try {
-        const { data } = await api.get(`/api/pets/tutor/${tutorId}`);
-        return unwrapList<Pet>(data);
-      } catch {
-        const { data } = await api.get('/api/pets');
-        return unwrapList<Pet>(data).filter((pet) => pet.idTutor === tutorId);
-      }
-    }
-
     const { data } = await api.get('/api/pets');
-    return unwrapList<Pet>(data);
+    const pets = unwrapList<Pet>(data);
+    if (tutorId) {
+      return pets.filter((pet) => Number(pet.idTutor) === Number(tutorId));
+    }
+    return pets;
   },
 
   async getById(id: number): Promise<Pet> {

@@ -13,6 +13,7 @@ export function getApiBaseUrl(): string {
 export const api = axios.create({
   baseURL: getApiBaseUrl(),
   timeout: 30000,
+  maxRedirects: 0,
   headers: {
     Accept: 'application/json',
     'Content-Type': 'application/json',
@@ -23,7 +24,7 @@ api.interceptors.response.use((response) => {
   const data = response.data;
   if (typeof data === 'string' && data.toLowerCase().includes('<html')) {
     return Promise.reject(
-      new Error('A API Java ainda está enviando a página de login. Faça o deploy da versão nova no Render.')
+      new Error('A API respondeu com a página de login neste pedido. Tente salvar de novo; não é preciso publicar a Java de novo.')
     );
   }
   return response;

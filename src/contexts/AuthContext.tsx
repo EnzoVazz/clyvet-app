@@ -42,6 +42,18 @@ async function saveProfile(profile: UserProfile) {
   await AsyncStorage.setItem(`${PROFILE_KEY}:${profile.uid}`, JSON.stringify(profile));
 }
 
+function profileFromFirebaseUser(nextUser: User): UserProfile {
+  return {
+    uid: nextUser.uid,
+    nome: nextUser.displayName?.trim() || nextUser.email?.split('@')[0] || 'Tutor',
+    email: nextUser.email ?? '',
+    tipo: 'TUTOR',
+    documento: '',
+    telefone: '',
+    apiUserId: null,
+  };
+}
+
 export function AuthProvider({ children }: PropsWithChildren) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -52,7 +64,13 @@ export function AuthProvider({ children }: PropsWithChildren) {
       setUser(nextUser);
       if (nextUser) {
         const stored = await loadProfile(nextUser.uid);
-        setProfile(stored);
+        if (stored) {
+          setProfile(stored);
+        } else {
+          const restored = profileFromFirebaseUser(nextUser);
+          await saveProfile(restored);
+          setProfile(restored);
+        }
       } else {
         setProfile(null);
       }
@@ -65,7 +83,13 @@ export function AuthProvider({ children }: PropsWithChildren) {
   async function signIn(email: string, senha: string) {
     const nextUser = await authService.signIn(email, senha);
     const stored = await loadProfile(nextUser.uid);
-    setProfile(stored);
+    if (stored) {
+      setProfile(stored);
+      return;
+    }
+    const restored = profileFromFirebaseUser(nextUser);
+    await saveProfile(restored);
+    setProfile(restored);
   }
 
   async function signUp(input: SignUpInput) {

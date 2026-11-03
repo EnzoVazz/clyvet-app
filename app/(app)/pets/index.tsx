@@ -29,7 +29,7 @@ export default function PetsScreen() {
     ]);
   }
 
-  if (petsQuery.isPending) {
+  if (petsQuery.isLoading) {
     return <LoadingState />;
   }
 

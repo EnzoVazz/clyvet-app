@@ -9,11 +9,11 @@ export function getErrorMessage(error: unknown): string {
     if (data && typeof data === 'object' && 'message' in data && typeof data.message === 'string') {
       return data.message;
     }
-    if (error.code === 'ECONNABORTED') {
-      return 'A API demorou para responder. Verifique se o json-server está rodando.';
+    if (error.code === 'ECONNABORTED' || error.message === 'timeout') {
+      return 'A API demorou para responder. O Render pode estar acordando — toque em Tentar novamente.';
     }
     if (error.message === 'Network Error') {
-      return 'Não foi possível conectar à API. Suba o servidor com npm run api.';
+      return 'Não foi possível conectar à API Java. Confira se o celular tem internet e se https://clyvet-api.onrender.com está no ar.';
     }
     return error.message;
   }
